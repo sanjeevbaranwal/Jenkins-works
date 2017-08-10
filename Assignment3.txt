@@ -1,0 +1,24 @@
+Consider a monolithic java application stack.
+
+Apache Web Server, Apache Tomcat application server with Active MQ and Oracle and MongoDB backend.
+
+Propose a solution to migrate this application stack to AWS. Mention all the AWS services you would use and how you would maintain HA and Load Balancing (consider app to be stateless). Mention rationale for each design decision.
+
+Solution
+===============
+1) Take the backup of Apache-tomcat complete folder and Apache web server conf and root directory folder
+2) Take the backup of Oracle DB and MongoDB 
+3) Create the AWS RDS instance for Oracle DB and import the Oracle DB backup on it
+3) Create the AWS Dynamo DB instance and import the backup of MongoDB backup on it
+4) Create the AWS EC2 instance and install the Apache Web server application on it
+5) Import the webserver related conf and root direcrtory content on it
+6) Deploy the Apache tomcat backup on the AWS EC2 instance
+7) For Mainting HA, we need to create multiple subnet as equal to the number of Availabilty Zones available in the Region.
+   All subnet must be in one private VPC for the AWS resources.
+8) For ELB, We will a Loab balancer (classic loadbalancing) with in the same region.
+   we need to define the Listener protocol,configuring the Health check to check the health check up target servers
+Need to add the EC2 instances to this ELB
+Need to enable the Loadbalancing policies to work
+Now we will have a elb in place that will manage the traffic acroos all EC2 instances with in a private VPC.   
+   
+   

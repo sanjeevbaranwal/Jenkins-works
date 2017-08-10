@@ -1,0 +1,41 @@
+# dockerfile to build image for Python 2.7, Apache 8.5 and Mongo db  on RHEL Environment
+
+# start from rhel 7.3
+FROM  java
+
+# file author / maintainer
+MAINTAINER "Sanjeev Baranwal" "sanjeev@gmail.com"
+
+ENV CATALINA_HOME /opt/apache
+ENV PATH $CATALINA_HOME/bin:$PATH
+RUN mkdir -p "$CATALINA_HOME"
+WORKDIR $CATALINA_HOME
+
+# update OS
+# RUN yum -y update
+
+# Install Python
+RUN ["yum -y install python"]
+
+
+# Install apache-tomcat-8.5.16
+ADD apache-tomcat-8.5.16.tar.gz /tmp/apache-tomcat-8.5.16.tar.gz
+RUN ["tar -xvf /tmp/apache-tomcat-8.5.16.tar.gz"]
+
+# set environment
+ENV APACHE_HOME /opt/apche/apache-tomcat-8.5.16
+
+#start the Apache
+RUN $APACHE_HOME/bin/startup.sh
+
+# Apache ports
+EXPOSE 8080 
+
+#Download the mongodb tar file and place in the directory
+RUN tar -xvf mongodb-linux-x86_64-rhel70-3.4.7.tgz
+
+#Start the service 
+RUN /opt/apache/mongodb-linux-x86_64-rhel70-3.4.7/bin/mongo
+
+
+CMD /bin/bash
